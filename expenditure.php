@@ -1,3 +1,8 @@
+<?php
+include "./includes/common.php";
+checkLoggedIn();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,8 +12,7 @@
   <title>AdminLTE 3 | Dashboard</title>
 
   <!-- Google Font: Source Sans Pro -->
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
   <!-- Ionicons -->
@@ -44,50 +48,32 @@
 
     include "./includes/db.php";
 
-    // Get user ID from URL parameter
-    $id = $_GET["id"];
-
-    // Retrieve user information from database
-    $sql = "SELECT * FROM users WHERE id=$id";
+    $sql = "SELECT * FROM users WHERE is_delete=0 AND expenditure IS NOT NULL ORDER BY id DESC LIMIT 5";
     $result = mysqli_query($conn, $sql);
-    $row = mysqli_fetch_assoc($result);
 
-    // Process form data when form is submitted
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-      $email = $_POST["email"];
-      $password = $_POST['password'];
-      $hashPassword = md5($password);
-
-      // Update user information in database
-      $sql = "UPDATE users SET  email='$email', password='$hashPassword' WHERE id=$id";
-      mysqli_query($conn, $sql);
-      echo ' 
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-  <script>
-    // Check the condition for success
-    var isSuccess = true; // Replace this with your actual condition
-
-    // If the condition is met, show the success message
-    if (isSuccess) {
-      Swal.fire({
-            title: "ແກ້ໄຂສຳເລັດ",
-            text: "ຂໍ້ມູນໄດ້ຖືກແກ້ໄຂສຳເລັດແລ້ວ",
-            icon: "success",
-            timer: 2000, // 2-3 seconds
-        timerProgressBar: true,
-        didOpen: () => {
-          Swal.showLoading();
-        }}
-  )};
-</script>';
-      // Redirect to user profile page
+    if (isset($_GET['success']) && $_GET['success'] === 'true') {
+      echo " <script src='https://cdn.jsdelivr.net/npm/sweetalert2@10'></script>
+    <script>
+      // Check the condition for success
+      var isSuccess = true; // Replace this with your actual condition
+  
+      // If the condition is met, show the success message
+      if (isSuccess) {
+        Swal.fire({
+              title: 'ບັນທຶກສຳເລັດ',
+              text: 'ຂໍ້ມູນໄດ້ຖືກບັນທຶກສຳເລັດແລ້ວ',
+              icon: 'success',
+              timer: 2000, // 2-3 seconds
+          timerProgressBar: true,
+          didOpen: () => {
+            Swal.showLoading();
+          }}
+    )};
+  </script>';";
+    } elseif (isset($_GET['success']) && $_GET['success'] === 'false') {
+      echo "<script>alert('Data error');</script>";
     }
-
-    mysqli_close($conn); // Close database connection
     ?>
-
-    <!-- HTML form to display user information and allow editing -->
-
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -109,44 +95,69 @@
       <section class="content">
         <div class="container-fluid">
           <div class="row">
-            <div class="col-md-12">
-              <h1 class="text-center text-bold">ຟອມແກ້ໄຂຂໍ້ມູນAdmin</h1>
-              <div class="card card-info">
+            <div class="col-md-6">
+              <h1 class="text-center text-bold">ຟອມບັນທຶກລາຍຈ່າຍ</h1>
+              <div class="card card-danger">
                 <div class="card-header">
-                  <h3 class="card-title">ການແກ້ໄຂຂໍ້ມູນadmin</h3>
+                  <h3 class="card-title">ການເພີ່ມລາຍຈ່າຍ</h3>
                 </div>
                 <!-- /.card-header -->
                 <!-- form start -->
-                <form method="POST">
+                <form method="POST" action="insertexpenditure.php">
                   <div class="card-body">
                     <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="exampleInputEmail1">ອີເມວ</label>
-                          <input type="email" name="email" class="form-control" id="exampleInputEmail1"
-                            value="<?php echo $row['email'] ?>" required placeholder="ອີເມວ">
-                        </div>
+                      <div class="form-group ml-4">
+                        <label for="exampleInputEmail1">ຈຳນວນເງິນ</label>
+                        <input type="number" name="expenditure" class="form-control" id="exampleInputEmail1" required placeholder="ຈຳນວນເງິນ">
                       </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="exampleInputPassword1">ລະຫັດຜ່ານ</label>
-                          <input type="password" name="password" class="form-control" id="exampleInputPassword1"
-                            value="<?php echo $row['password'] ?>" required placeholder="*******">
-                        </div>
+                      <div class="form-group ml-4">
+                        <label for="exampleInputPassword1">ເຫດຜົນ</label>
+                        <input type="text" name="ex_reason" class="form-control" id="exampleInputPassword1" required placeholder="ເຫດຜົນໃຊ້ຈ່າຍ">
                       </div>
-
+                      <div class="form-group ml-4">
+                        <label for="exampleInputPassword1">ສະຖານະ</label>
+                        <select name="m_status" id="" class="form-control">
+                          <option value="ເງິນສົດ">ເງິນສົດ</option>
+                          <option value="ເງິນໃນບັນຊີ">ເງິນໃນບັນຊີ</option>
+                        </select>
+                      </div>
                     </div>
 
                   </div>
                   <!-- /.card-body -->
 
                   <div class="card-footer">
-                    <button type="submit" class="btn btn-info">ສົ່ງຟອມ</button>
+                    <button type="submit" class="btn btn-danger">ບັນທຶກ</button>
                   </div>
                 </form>
               </div>
             </div>
-
+            <div class="col-md-6" style="overflow:auto;">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>ຈຳນວນເງິນ</th>
+                    <th>ເຫດຜົນ</th>
+                    <th>ສະຖານະ</th>
+                    <th>ວັນທີ່ເວລາ</th>
+                    <th>ປຸ່ມຄຳສັ່ງ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+                    <tr>
+                      <td><?php echo $row['id'] ?></td>
+                      <td><?php echo $row['expenditure'] ?></td>
+                      <td><?php echo $row['ex_reason'] ?></td>
+                      <td><?php echo $row['m_status'] ?></td>
+                      <td><?php echo $row['timestamps'] ?></td>
+                      <td><a href="editexpenditure.php?id=<?php echo $row['id'] ?>" class="btn btn-warning"><i class="fas fa-edit"></i></a><a href="#" onclick="confirmDelete(<?php echo $row['id']; ?>)" class="btn btn-danger"><i class="fas fa-times"></i></a></td>
+                    </tr>
+                  <?php } ?>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>
@@ -188,7 +199,7 @@
               Swal.showLoading();
             }
           }).then(() => {
-            window.location.href = 'deleteadmin.php?id=' + $id;
+            window.location.href = 'deleteexpenditure.php?id=' + $id;
           });
         }
       });

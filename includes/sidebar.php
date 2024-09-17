@@ -38,7 +38,46 @@
               <i class="nav-icon fas fa-user"></i>
               <p>
                 <b>Admin</b>
-                
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="./expenditure.php" class="nav-link">
+              <i class="nav-icon fas ">₭</i>
+              <p>
+                <b>ລາຍຈ່າຍ</b>
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="./teacherform.php" class="nav-link">
+              <i class="nav-icon fas fa-users"></i>
+              <p>
+                <b>ຄູ-ອາຈານ</b>
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="./subjectform.php" class="nav-link">
+              <i class="nav-icon fas fa-book"></i>
+              <p>
+                <b>ວິຊາຮຽນ</b>
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="./classform.php" class="nav-link">
+              <i class="nav-icon fas fa-book"></i>
+              <p>
+                <b>ຫ້ອງຮຽນ</b>
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="./scoreform.php" class="nav-link">
+              <i class="nav-icon fas fa-book"></i>
+              <p>
+                <b>ຄະແນນ</b>
               </p>
             </a>
           </li>
@@ -47,6 +86,14 @@
               <i class="nav-icon fas fa-users"></i>
               <p>
                 <b>ພໍ່ແມ່</b>
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="./studentform.php" class="nav-link">
+              <i class="nav-icon fas fa-users"></i>
+              <p>
+                <b>ນັກຮຽນ</b>
               </p>
             </a>
           </li>

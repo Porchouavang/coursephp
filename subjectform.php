@@ -1,3 +1,8 @@
+<?php
+include "./includes/common.php";
+checkLoggedIn();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -44,50 +49,32 @@
 
     include "./includes/db.php";
 
-    // Get user ID from URL parameter
-    $id = $_GET["id"];
-
-    // Retrieve user information from database
-    $sql = "SELECT * FROM users WHERE id=$id";
+    $sql = "SELECT * FROM users WHERE is_delete=0 and role = 3";
     $result = mysqli_query($conn, $sql);
-    $row = mysqli_fetch_assoc($result);
 
-    // Process form data when form is submitted
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-      $email = $_POST["email"];
-      $password = $_POST['password'];
-      $hashPassword = md5($password);
-
-      // Update user information in database
-      $sql = "UPDATE users SET  email='$email', password='$hashPassword' WHERE id=$id";
-      mysqli_query($conn, $sql);
-      echo ' 
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-  <script>
-    // Check the condition for success
-    var isSuccess = true; // Replace this with your actual condition
-
-    // If the condition is met, show the success message
-    if (isSuccess) {
-      Swal.fire({
-            title: "ແກ້ໄຂສຳເລັດ",
-            text: "ຂໍ້ມູນໄດ້ຖືກແກ້ໄຂສຳເລັດແລ້ວ",
-            icon: "success",
-            timer: 2000, // 2-3 seconds
-        timerProgressBar: true,
-        didOpen: () => {
-          Swal.showLoading();
-        }}
-  )};
-</script>';
-      // Redirect to user profile page
+    if (isset($_GET['success']) && $_GET['success'] === 'true') {
+      echo " <script src='https://cdn.jsdelivr.net/npm/sweetalert2@10'></script>
+    <script>
+      // Check the condition for success
+      var isSuccess = true; // Replace this with your actual condition
+  
+      // If the condition is met, show the success message
+      if (isSuccess) {
+        Swal.fire({
+              title: 'ບັນທຶກສຳເລັດ',
+              text: 'ຂໍ້ມູນໄດ້ຖືກບັນທຶກສຳເລັດແລ້ວ',
+              icon: 'success',
+              timer: 2000, // 2-3 seconds
+          timerProgressBar: true,
+          didOpen: () => {
+            Swal.showLoading();
+          }}
+    )};
+  </script>';";
+    } elseif (isset($_GET['success']) && $_GET['success'] === 'false') {
+      echo "<script>alert('Data error');</script>";
     }
-
-    mysqli_close($conn); // Close database connection
     ?>
-
-    <!-- HTML form to display user information and allow editing -->
-
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -109,44 +96,74 @@
       <section class="content">
         <div class="container-fluid">
           <div class="row">
-            <div class="col-md-12">
-              <h1 class="text-center text-bold">ຟອມແກ້ໄຂຂໍ້ມູນAdmin</h1>
-              <div class="card card-info">
+            <div class="col-md-6">
+              <h1 class="text-center text-bold">ຟອມວິຊາຮຽນ</h1>
+              <div class="card card-primary">
                 <div class="card-header">
-                  <h3 class="card-title">ການແກ້ໄຂຂໍ້ມູນadmin</h3>
+                  <h3 class="card-title">ການເພີ່ມວິຊາຮຽນ</h3>
                 </div>
                 <!-- /.card-header -->
                 <!-- form start -->
-                <form method="POST">
+                <form method="POST" action="insertsubject.php">
                   <div class="card-body">
                     <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="exampleInputEmail1">ອີເມວ</label>
-                          <input type="email" name="email" class="form-control" id="exampleInputEmail1"
-                            value="<?php echo $row['email'] ?>" required placeholder="ອີເມວ">
-                        </div>
+                      <div class="form-group ml-5">
+                        <label for="exampleInputEmail1">ຊື່ວິຊາ</label>
+                        <input type="text" name="subject_name" class="form-control" id="exampleInputEmail1" required
+                          placeholder="ກະລຸນາປ້ອນວິຊາຮຽນ">
                       </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="exampleInputPassword1">ລະຫັດຜ່ານ</label>
-                          <input type="password" name="password" class="form-control" id="exampleInputPassword1"
-                            value="<?php echo $row['password'] ?>" required placeholder="*******">
-                        </div>
-                      </div>
+                      <div class="form-group ml-5">
+                        <label for="exampleInputPassword1">ຊື່ຄູສອນ</label>
+                        <select name="first_name" id="" class="form-control">
+                          <?php while ($row = mysqli_fetch_assoc($result)) {
+                            echo '<option value="'.$row['first_name'].'">'.$row['first_name'].'</option>';
+                          } ?>
+                        </select>
 
+
+                      </div>
                     </div>
 
                   </div>
                   <!-- /.card-body -->
 
                   <div class="card-footer">
-                    <button type="submit" class="btn btn-info">ສົ່ງຟອມ</button>
+                    <button type="submit" class="btn btn-primary">ສົ່ງຟອມ</button>
                   </div>
                 </form>
               </div>
             </div>
-
+            <div class="col-md-6" style="overflow:auto;">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>ຊື່ວິຊາ</th>
+                    <th>ຊື່ຄູສອນ</th>
+                    <th>ວັນທີ່ເວລາ</th>
+                    <th>ປຸ່ມຄຳສັ່ງ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php 
+                  
+                  include("./includes/db.php");
+                  $sql1 = "SELECT subjects.s_ID,subjects.subject_name,subjects.timestamps, users.first_name FROM subjects JOIN users ON subjects.teacher_ID = users.id WHERE subjects.is_delete = 0";
+                  $results = mysqli_query($conn, $sql1);
+                  while ($row = mysqli_fetch_assoc($results)) { ?>
+                    <tr>
+                      <td><?php echo $row['s_ID'] ?></td>
+                      <td><?php echo $row['subject_name'] ?></td>
+                      <td><?php echo $row['first_name'] ?></td>
+                      <td><?php echo $row['timestamps'] ?></td>
+                      <td><a href="editadmin.php?id=<?php echo $row['s_ID'] ?>" class="btn btn-warning"><i
+                            class="fas fa-edit"></i></a><a href="#" onclick="confirmDelete(<?php echo $row['s_ID']; ?>)"
+                          class="btn btn-danger"><i class="fas fa-times"></i></a></td>
+                    </tr>
+                  <?php } ?>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>
@@ -188,7 +205,7 @@
               Swal.showLoading();
             }
           }).then(() => {
-            window.location.href = 'deleteadmin.php?id=' + $id;
+            window.location.href = 'deletesubject.php?s_ID=' + $id;
           });
         }
       });

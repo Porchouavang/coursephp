@@ -48,32 +48,62 @@ checkLoggedIn();
     include "./includes/sidebar.php";
 
     include "./includes/db.php";
+    $id = $_GET["id"];
 
-    $sql = "SELECT * FROM users  WHERE is_delete=0 AND expenditure IS NULL AND role=1 ORDER BY id DESC";
+    // Retrieve user information from database
+    $sql = "SELECT * FROM users WHERE id=$id";
     $result = mysqli_query($conn, $sql);
+    $row = mysqli_fetch_assoc($result);
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+      $first_name = $_POST['first_name'];
+      $last_name = $_POST['last_name'];
+      $gender = $_POST['gender'];
+      $birthday = $_POST['birthday'];
+      $age = $_POST['age'];
+      $province = $_POST['province'];
+      $district = $_POST['district'];
+      $village = $_POST['village'];
+      $phone = $_POST['phone'];
+      $mobile = $_POST['mobile'];
+      $f_name = $_POST['f_name'];
+      $f_phone = $_POST['f_phone'];
+      $m_name = $_POST['m_name'];
+      $m_phone = $_POST['m_phone'];
+      $income = $_POST['income'];
+      $status = $_POST['status'];
+      // $targetDirectory = "profiles/";
+      // $targetFile = $targetDirectory . basename($_FILES["fileToUpload"]["name"]);
+      // $uploadOk = 1;
+      // $imageFileType = strtolower(pathinfo($targetFile,PATHINFO_EXTENSION));
+    
 
-    if (isset($_GET['success']) && $_GET['success'] === 'true') {
-      echo " <script src='https://cdn.jsdelivr.net/npm/sweetalert2@10'></script>
-    <script>
-      // Check the condition for success
-      var isSuccess = true; // Replace this with your actual condition
-  
-      // If the condition is met, show the success message
-      if (isSuccess) {
-        Swal.fire({
-              title: 'ບັນທຶກສຳເລັດ',
-              text: 'ຂໍ້ມູນໄດ້ຖືກບັນທຶກສຳເລັດແລ້ວ',
-              icon: 'success',
-              timer: 2000, // 2-3 seconds
-          timerProgressBar: true,
-          didOpen: () => {
-            Swal.showLoading();
-          }}
-    )};
-  </script>';";
-    } elseif (isset($_GET['success']) && $_GET['success'] === 'false') {
-      echo "<script>alert('Data error');</script>";
+      // Update user information in database
+      $sql = "UPDATE users SET  first_name='$first_name', last_name='$last_name', gender='$gender', birthday='$birthday', age='$age', province='$province',
+                    district='$district', f_name='$f_name', f_phone='$f_phone', m_name='$m_name', m_phone='$m_phone' WHERE id=$id";
+      mysqli_query($conn, $sql);
+      echo ' 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <script>
+    // Check the condition for success
+    var isSuccess = true; // Replace this with your actual condition
+
+    // If the condition is met, show the success message
+    if (isSuccess) {
+      Swal.fire({
+            title: "ແກ້ໄຂສຳເລັດ",
+            text: "ຂໍ້ມູນໄດ້ຖືກແກ້ໄຂສຳເລັດແລ້ວ",
+            icon: "success",
+            timer: 2000, // 2-3 seconds
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+        }}
+  )};
+</script>';
+      // Redirect to user profile page
     }
+
+    mysqli_close($conn); // Close database connection
     ?>
 
     <!-- Content Wrapper. Contains page content -->
@@ -96,30 +126,30 @@ checkLoggedIn();
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
-              <h1 class="text-center text-bold">ຟອມນັກສຶກສາ</h1>
-              <div class="card card-primary">
+              <h1 class="text-center text-bold">ແກ້ໄຂຂໍ້ມູນນັກສຶກສາລະຫັດທີ່: <?php echo $row['id'] ?></h1>
+              <div class="card card-info">
                 <div class="card-header">
-                  <h3 class="card-title">ການເພີ່ມນັກສຶກສາ</h3>
+                  <h3 class="card-title">ຂໍ້ມູນນັກສຶກສາ</h3>
                 </div>
                 <!-- /.card-header -->
                 <!-- form start -->
-                <form method="POST" action="insertstudent.php" enctype="multipart/form-data">
+                <form method="POST" action="" enctype="multipart/form-data">
                   <div class="card-body">
                     <div class="row">
                       <div class="form-group ml-4">
                         <label for="exampleInputEmail1">ຊື່</label>
-                        <input type="text" name="first_name" class="form-control" id="exampleInputEmail1" required
-                          placeholder="ກະລຸນາປ້ອນຊື່">
+                        <input type="text" name="first_name" class="form-control" id="exampleInputEmail1"
+                          value="<?php echo $row['first_name'] ?>" required placeholder="ກະລຸນາປ້ອນຊື່">
                       </div>
                       <div class="form-group ml-4">
                         <label for="exampleInputPassword1">ນາມສະກຸນ</label>
-                        <input type="text" name="last_name" class="form-control" id="exampleInputPassword1" required
-                          placeholder="ກະລຸນາປ້ອນນາມສະກຸນ">
+                        <input type="text" name="last_name" class="form-control" id="exampleInputPassword1"
+                          value="<?php echo $row['last_name'] ?>" required placeholder="ກະລຸນາປ້ອນນາມສະກຸນ">
                       </div>
-                      <div class="form-group ml-4">
-                        <label for="exampleInputPassword1">ໂປຣຟາຍ</label>
-                        <input type="file" name="fileToUpload" class="form-control" id="exampleInputPassword1" required>
-                      </div>
+                      <!-- <div class="form-group ml-4">
+                   <label for="exampleInputPassword1">ໂປຣຟາຍ</label>
+                   <input type="file" name="fileToUpload" class="form-control" id="exampleInputPassword1" value="<?php echo $row['profile'] ?>" required >
+                 </div> -->
                       <div class="form-group ml-4">
                         <label for="exampleInputEmail1">ເພດ</label>
                         <select name="gender" id="" class="form-control">
@@ -131,22 +161,14 @@ checkLoggedIn();
                       </div>
                       <div class="form-group ml-4">
                         <label for="exampleInputPassword1">ວັນເດືອນປີເກີດ</label>
-                        <input type="date" name="birthday" class="form-control" id="exampleInputPassword1" required>
+                        <input type="date" name="birthday" class="form-control" id="exampleInputPassword1"
+                          value="<?php echo $row['birthday'] ?>" required>
                       </div>
-                      <div class="form-group ml-4">
-                        <label for="exampleInputEmail1">ອີເມວ</label>
-                        <input type="email" name="email" class="form-control" id="exampleInputEmail1" required
-                          placeholder="email@gmail.com">
-                      </div>
-                      <div class="form-group ml-4">
-                        <label for="exampleInputPassword1">ລະຫັດຜ່ານ</label>
-                        <input type="password" name="password" class="form-control" id="exampleInputPassword1" required
-                          placeholder="*******">
-                      </div>
+                      
                       <div class="form-group ml-4">
                         <label for="exampleInputPassword1">ອາຍຸ</label>
                         <input type="number" name="age" class="form-control" id="exampleInputPassword1" required
-                          placeholder="ກະລຸນາປ້ອນອາຍຸ">
+                          value="<?php echo $row['age'] ?>" placeholder="ກະລຸນາປ້ອນອາຍຸ">
                       </div>
                       <div class="form-group ml-4">
                         <label for="exampleInputPassword1">ແຂວງ</label>
@@ -174,48 +196,48 @@ checkLoggedIn();
                       </div>
                       <div class="form-group ml-4">
                         <label for="exampleInputPassword1">ເມືອງ</label>
-                        <input type="text" name="district" class="form-control" id="exampleInputPassword1" required
-                          placeholder="ກະລຸນາປ້ອນເມືອງ">
+                        <input type="text" name="district" class="form-control" id="exampleInputPassword1"
+                          value="<?php echo $row['district'] ?>" required placeholder="ກະລຸນາປ້ອນເມືອງ">
                       </div>
                       <div class="form-group ml-4">
                         <label for="exampleInputPassword1">ບ້ານ</label>
-                        <input type="text" name="village" class="form-control" id="exampleInputPassword1" required
-                          placeholder="ກະລຸນາປ້ອນບ້ານ">
+                        <input type="text" name="village" class="form-control" id="exampleInputPassword1"
+                          value="<?php echo $row['village'] ?>" required placeholder="ກະລຸນາປ້ອນບ້ານ">
                       </div>
                       <div class="form-group ml-4">
                         <label for="exampleInputPassword1">ເບີໂທ</label>
-                        <input type="text" name="phone" class="form-control" id="exampleInputPassword1" required
-                          placeholder="ກະລຸນາປ້ອນເບີໂທ">
+                        <input type="text" name="phone" class="form-control" id="exampleInputPassword1"
+                          value="<?php echo $row['phone'] ?>" required placeholder="ກະລຸນາປ້ອນເບີໂທ">
                       </div>
                       <div class="form-group ml-4">
                         <label for="exampleInputPassword1">ມືຖື</label>
-                        <input type="text" name="mobile" class="form-control" id="exampleInputPassword1" required
-                          placeholder="ກະລຸນາປ້ອນເບີມືຖື">
+                        <input type="text" name="mobile" class="form-control" id="exampleInputPassword1"
+                          value="<?php echo $row['mobile'] ?>" required placeholder="ກະລຸນາປ້ອນເບີມືຖື">
                       </div>
                       <div class="form-group ml-4">
                         <label for="exampleInputPassword1">ຊື່ພໍ່</label>
-                        <input type="text" name="f_name" class="form-control" id="exampleInputPassword1" required
-                          placeholder="ກະລຸນາປ້ອນຊື່ພໍ່">
+                        <input type="text" name="f_name" class="form-control" id="exampleInputPassword1"
+                          value="<?php echo $row['f_name'] ?>" required placeholder="ກະລຸນາປ້ອນຊື່ພໍ່">
                       </div>
                       <div class="form-group ml-4">
                         <label for="exampleInputPassword1">ເບີໂທພໍ່</label>
-                        <input type="text" name="f_phone" class="form-control" id="exampleInputPassword1" required
-                          placeholder="ກະລຸນາປ້ອນເບີໂທພໍ່">
+                        <input type="text" name="f_phone" class="form-control" id="exampleInputPassword1"
+                          value="<?php echo $row['f_phone'] ?>" required placeholder="ກະລຸນາປ້ອນເບີໂທພໍ່">
                       </div>
                       <div class="form-group ml-4">
                         <label for="exampleInputPassword1">ຊື່ແມ່</label>
-                        <input type="text" name="m_name" class="form-control" id="exampleInputPassword1" required
-                          placeholder="ກະລຸນາປ້ອນຊື່ແມ່">
+                        <input type="text" name="m_name" class="form-control" id="exampleInputPassword1"
+                          value="<?php echo $row['m_name'] ?>" required placeholder="ກະລຸນາປ້ອນຊື່ແມ່">
                       </div>
                       <div class="form-group ml-4">
                         <label for="exampleInputPassword1">ເບີໂທແມ່</label>
-                        <input type="text" name="m_phone" class="form-control" id="exampleInputPassword1" required
-                          placeholder="ກະລຸນາປ້ອນເບີໂທແມ່">
+                        <input type="text" name="m_phone" class="form-control" id="exampleInputPassword1"
+                          value="<?php echo $row['m_phone'] ?>" required placeholder="ກະລຸນາປ້ອນເບີໂທແມ່">
                       </div>
                       <div class="form-group ml-4">
                         <label for="exampleInputPassword1">ຈຳນວນເງິນ</label>
-                        <input type="number" name="income" class="form-control" id="exampleInputPassword1" required
-                          placeholder="ກະລຸນາປ້ອນຈຳນວນເງິນ">
+                        <input type="number" name="income" class="form-control" id="exampleInputPassword1"
+                          value="<?php echo $row['income'] ?>" required placeholder="ກະລຸນາປ້ອນຈຳນວນເງິນ">
                       </div>
                       <div class="form-group ml-4">
                         <label for="exampleInputPassword1">ສະຖານະ</label>
@@ -236,58 +258,10 @@ checkLoggedIn();
                   <!-- /.card-body -->
 
                   <div class="card-footer">
-                    <button type="submit" class="btn btn-primary">ສົ່ງຟອມ</button>
+                    <button type="submit" class="btn btn-info">ອັບເດດ</button>
                   </div>
                 </form>
               </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12" style="overflow:auto">
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>ໂປຣຟາຍ</th>
-                    <th>ຊື່</th>
-                    <th>ນາມສະກຸນ</th>
-                    <th>ເພດ</th>
-                    <th>ວັນເດືອນປີເກີດ</th>
-                    <th>ອີເມວ</th>
-                    <th>ອາຍຸ</th>
-                    <th>ບ້ານ</th>
-                    <th>ເມືອງ</th>
-                    <th>ແຂວງ</th>
-                    <th>ເບີໂທ</th>
-                    <th>ປຸ່ມຄຳສັ່ງ</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <?php while ($row = mysqli_fetch_assoc($result)) { ?>
-                    <tr>
-                      <td><?php echo $row['id'] ?></td>
-                      <td class="pdimg"><?php $filePath = $row["profile"];
-                      echo '<img src="' . $filePath . '" alt="Uploaded Image" width="100">'; ?>
-                      </td>
-                      <td><?php echo $row['first_name'] ?></td>
-                      <td><?php echo $row['last_name'] ?></td>
-                      <td><?php echo $row['gender'] ?></td>
-                      <td><?php echo $row['birthday'] ?></td>
-                      <td><?php echo $row['email'] ?></td>
-                      <td><?php echo $row['age'] ?></td>
-                      <td><?php echo $row['village'] ?></td>
-                      <td><?php echo $row['district'] ?></td>
-                      <td><?php echo $row['province'] ?></td>
-                      <td><?php echo $row['phone'] ?></td>
-                      <td><a href="editstudent.php?id=<?php echo $row['id'] ?>" class="btn btn-warning"><i
-                            class="fas fa-edit"></i></a><a href="#" onclick="confirmDelete(<?php echo $row['id']; ?>)"
-                          class="btn btn-danger"><i class="fas fa-times"></i></a><a
-                          href="viewstudent.php?id=<?php echo $row['id']; ?>" class="btn btn-success ml-1"><i
-                            class="fas fa-eye"></i></a></td>
-                    </tr>
-                  <?php } ?>
-                </tbody>
-              </table>
             </div>
           </div>
         </div>
